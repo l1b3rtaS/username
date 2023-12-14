@@ -116,8 +116,6 @@ async def start_cicle(number):
                                 if not user_info:
                                     print(f"NO USER {link}")
                                     await bot.send_message(5282299482, f'{link}')
-                                    await bot.send_message(6550258397, f'{link}')
-                                    await bot.send_message(5901778338, f'{link}')
                                     await bot.send_message(6900311048, f'{link}')
                                 else:
                                     print(f"EXISTS USER {link}")
