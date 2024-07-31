@@ -6,7 +6,6 @@ from aiogram.types import FSInputFile
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiocryptopay import AioCryptoPay, Networks
-
 from config import *
 from random import randint , choice
 from pythonping import ping
@@ -27,33 +26,10 @@ import aiohttp
 from bs4 import BeautifulSoup
 import time
 import requests
-
-
 from telethon.sync import TelegramClient
 from telethon import functions, types
 
 
-#+351 930 555 040
-#+380 98 427 51 50
-#+380 93 432 85 69
-#+380 99 293 36 82
-# accounts = [
-    # [14588358, "4066cd844802457e1541a4ffd1f288d1"],
-    # [14775416, "c90f80f454012aa470008a572314d303"],
-    # [26854455, "4b901b280a670798e441e062fbbba812"],
-    # [21388937, "b82cb8df103ebc8c806bcc19fb32548b"]
-# ]
-
-
-# for account in accounts:
-#     print(f"LOGGING TO {account[0]} START")
-#     with TelegramClient(f"my_account1", account[0], account[1]) as client:
-        
-#         result = (functions.contacts.SearchRequest(
-#             q="durov",
-#             limit=1
-#         ))
-#     print(f"LOGGING SESSION {account[0]} TRUE")
     
 
 
@@ -73,35 +49,10 @@ async def start_cicle(number):
             file.close()
             print(bd)
             bd = bd.split("\n")
-            # chunk_size = len(bd) // 5
-            # bd_chunk = bd[(number - 1) * chunk_size : number * chunk_size]
-            # global accounts
-            # async with TelegramClient(f"my_account{number}", accounts[number-1][0], accounts[number-1][1]) as client:
-            #     for link in bd_chunk:
-            #         print(number)
-            #         file = open(f"status.txt", "r", encoding="utf-8")
-            #         status = file.read()
-            #         file.close()
-            #         if status == "Work":
-            #             try:
-            #                 result = await client(functions.contacts.SearchRequest(
-            #                     q=link[13:],
-            #                     limit=1
-            #                 ))
-                            
-            #                 if not result.results:
-            #                     print(f"NO {link}")
-            #                     good_links.append(link)
-            #                 else:
-            #                     print("yes")
 
-            #             except:
-            #                 pass
-            #             await asyncio.sleep(1.5)
             
             for link in bd:
                 print(link)
-                # link = "https://"+link
                 
                 file = open(f"status.txt", "r", encoding="utf-8")
                 status = file.read()
@@ -122,21 +73,6 @@ async def start_cicle(number):
                     except:
                         print("error")
                     sleep(0.3)
-            # end_time = time.time()
-            # elapsed_time = end_time - start_time
-            # unique_list = []
-            # for item in good_links:
-            #     if item not in unique_list:
-            #         unique_list.append(item)
-            # good_linkss = "\n".join(unique_list)
-            
-            # if len(unique_list) != 0 :
-                
-            #     await bot.send_message(5282299482, f'Юзернеймы:\n\n{good_linkss}\n\nсвободны\n\nПоток №{number}\nПроверка заняла {int(elapsed_time)} секунд')
-            #     await bot.send_message(6550258397, f'Юзернеймы:\n\n{good_linkss}\n\nсвободны\n\nПоток №{number}\nПроверка заняла {int(elapsed_time)} секунд')
-            # else:
-            #     await bot.send_message(5282299482, f'Не найдено спободных юзернеймов\n\nПоток №{number}\nПроверка заняла {int(elapsed_time)} секунд')
-            #     await bot.send_message(6550258397, f'Не найдено спободных юзернеймов\n\nПоток №{number}\nПроверка заняла {int(elapsed_time)} секунд')
 
             file = open(f"status.txt", "r", encoding="utf-8")
             status = file.read()
@@ -178,21 +114,34 @@ async def delete_number(message: types.Message):
     if message.text:
         if message.chat.id == 5282299482 or message.chat.id == 6550258397 or message.chat.id == 5901778338 or message.chat.id == 6900311048:
             if message.text[:7].lower() == "удалить":
-                file = open("bd.txt" , "r" , encoding="utf-8")
-                bd_read = file.read()
-                file.close()
-                if message.text[8:] in bd_read:
-                    bd = bd_read.split("\n")
-                    todel = bd.index(message.text[8:])
-                    bd.pop(todel)
-                    new_bd = "\n".join(bd)
-                    file = open("bd.txt" , "w" , encoding="utf-8")
-                    file.write(new_bd)
-                    file.close()
+                todell = message.text.split("\n")
+                todell.pop(0)
 
-                    await bot.send_message(chat_id=message.chat.id, text=f"🔗 Ссылка: {message.text[8:]} удалена")
-                else:
-                    await bot.send_message(chat_id=message.chat.id, text=f"❌ Ошибка: ссылки нету в базе данных")
+                file = open("bd.txt" , "r" , encoding="utf-8")
+                cur_bd = file.read()
+                file.close()
+                cur_bd = cur_bd.split("\n")
+
+                to_add = []
+                deleted = []
+
+                for link in cur_bd:
+                    if link not in todell:
+                        to_add.append(link)
+                    else:
+                        deleted.append(link)
+
+                to_add = "\n".join(to_add)
+                deleted = ", ".join(deleted)
+
+
+                file = open("bd.txt" , "w" , encoding="utf-8")
+                file.write(to_add)
+                file.close()
+
+
+                await bot.send_message(chat_id=message.chat.id, text=f"🔗 Ссылки: {deleted} удалены")
+
             elif message.text[:8].lower() == "добавить":
                 mmessage = message.text.split("\n")
                 mmessage.pop(0)
@@ -229,7 +178,9 @@ async def delete_number(message: types.Message):
                     status = "Error"
             
         
-        
+                menu.append([
+                    InlineKeyboardButton(text="🗂Выкачать", callback_data="downlo")
+                    ])
                 
  
                 inline_buttons = InlineKeyboardMarkup(inline_keyboard=menu)
@@ -330,12 +281,17 @@ async def maincall(callback: CallbackQuery, state: FSMContext):
         else:
             status = "Error"
 
+        menu.append([
+            InlineKeyboardButton(text="🗂Выкачать", callback_data="downlo")
+            ])
+
 
 
         inline_buttons = InlineKeyboardMarkup(inline_keyboard=menu)
         await bot.edit_message_text(chat_id=call_message_chat_id, message_id=call_message_id , text=f"💡 Главное меню\n\n⚙️ Статус цикла: {status}\n📊 Объём базы данных: {len(bd_n)}", reply_markup=inline_buttons)
-
-
+    elif command == "downlo":
+        file = FSInputFile('bd.txt')
+        await bot.send_document(chat_id=call_message_chat_id, document=file)
 
 
 
